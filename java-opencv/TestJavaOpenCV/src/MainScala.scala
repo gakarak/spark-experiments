@@ -6,7 +6,7 @@ import by.grid.imlab.Descriptor
 import by.grid.imlab.Imshow
 import org.opencv.highgui.Highgui
 
-object Main {
+object MainScala {
   def main (args: Array[String]){
     // (1) Load OpenCV dynamic library
     System.loadLibrary("opencv_java246")
