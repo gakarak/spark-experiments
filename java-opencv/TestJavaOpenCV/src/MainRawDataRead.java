@@ -4,9 +4,12 @@
 
 import by.grid.imlab.Descriptor;
 import by.grid.imlab.Imshow;
-import org.opencv.core.*;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -24,10 +27,17 @@ public class MainRawDataRead {
         ArrayList<Descriptor> listDsc = new ArrayList<Descriptor>(numImages);
         for(int ii=0; ii<numImages; ii++) {
             String pathImg = "data/doge2_rot_scale_crop" + ii + ".png";
-            Mat img = Highgui.imread(pathImg, Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            // (1) Prepare Byte-buffer:
+            byte[] data = null;
+            try {
+                data = Files.readAllBytes(Paths.get(pathImg));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Imshow viewImg = new Imshow("Img #" + ii);
-            viewImg.showImage(img);
-            Descriptor dsc = Descriptor.buildDsc(img, Descriptor.DEF_BIN_NUMBER, true);
+            viewImg.showImage(Descriptor.decodeByteBuff(data, Highgui.CV_LOAD_IMAGE_GRAYSCALE));
+            // (2) Build Descriptor from Byte-buffered image
+            Descriptor dsc = Descriptor.buildDscFromRawData(data, Descriptor.DEF_BIN_NUMBER, true);
             listDsc.add(dsc);
         }
 

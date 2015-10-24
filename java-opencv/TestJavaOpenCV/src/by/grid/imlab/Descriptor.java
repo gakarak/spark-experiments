@@ -1,8 +1,10 @@
 package by.grid.imlab;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Arrays;
@@ -43,6 +45,32 @@ public class Descriptor {
         Descriptor ret = new Descriptor();
         if(ret.build(img, numBin, isNormed)) {
             return ret;
+        } else {
+            return null;
+        }
+    }
+    public static Mat decodeByteBuff(byte[] data, int OCV_DECODE_FLAGS) {
+        if( (data!=null) && (data.length>0)) {
+            Mat buff = new Mat(1,data.length, CvType.CV_8UC1);
+            buff.put(0,0,data);
+            return Highgui.imdecode(buff, OCV_DECODE_FLAGS);
+        } else {
+            return null;
+        }
+    }
+    public static Mat decodeByteBuff(byte[] data) {
+        return Descriptor.decodeByteBuff(data, Highgui.CV_LOAD_IMAGE_UNCHANGED);
+    }
+    public static Descriptor buildDscFromRawData(byte[] data, int numBin, boolean isNormed) {
+        if( (data!=null) && (data.length>0)) {
+            Mat buff = new Mat(1,data.length, CvType.CV_8UC1);
+            buff.put(0,0,data);
+            Mat img  = Highgui.imdecode(buff, Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            if(!img.empty()) {
+                return Descriptor.buildDsc(img, numBin, isNormed);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
